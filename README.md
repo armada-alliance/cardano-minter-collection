@@ -1,348 +1,99 @@
-# How to create an NFT on the Cardano blockchain using JavaScript
-
-Youtube Video: https://www.youtube.com/watch?v=OeOliguGn7Y
-
-## Who is this guide for?
-
-- For people who want to make NFT's
-- For people who perhaps know Cardano
-
-## Benefits of NFT's on Cardano
-
-- Low transaction fees
-- Native on the blockchain (perhaps compare with Ethereum, eth is smart contract based)
+# How to make a NFT collection on Cardano using javascript.
 
 ## Prerequisites
-
 - cardano-node / cardano-cli set up on local machine (https://docs.cardano.org/projects/cardano-node/en/latest)
-- node.js installed
+- Node.js installed version 14
+- cardano-cli-js package installed 
+- cardano-minter repo from the previous tutorial
 
+**If you haven't already, watch the previous video tutorial here:**
+https://youtu.be/OeOliguGn7Y
+
+## Clone the cardano-minter repo if you haven't already...
 ```bash
-curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-sudo apt-get install -y nodejs
+git clone https://github.com/ADA-Pi/cardano-minter
+cd cardano-minter
 ```
-
-3. Verify everything is set up properly
-
-cardano-cli
-
-```
-cardano-cli version
-```
-
-output should be similar:
-
-```
-cardano-cli 1.26.1 - linux-aarch64 - ghc-8.10
-git rev 0000000000000000000000000000000000000000
-```
-
-cardano-node
-
-```
-cardano-node version
-```
-
-output should be similar:
-
-```
-cardano-node 1.26.1 - linux-aarch64 - ghc-8.10
-git rev 0000000000000000000000000000000000000000
-```
-
-node.js
-
-```
-node -v
-```
-
-```
-v14.16.0
-```
-
-## Overview of this tutorial
-
-1. verify env
-
-2. create project and inital setup
-
+## Install additional dependencies
 ```bash
-#make sure our db is in our $PATH
-CARDANO_NODE_SOCKET_PATH="$NODE_HOME/db/socket"
-
-mkdir minter
-cd minter
-npm init -y #creates package.json)
-npm install cardanocli-js --save
-
+npm install form-data dotenv axios lodash sharp promise-parallel-throttle --save
 ```
+# Tutorial Overview
 
-3. Copy the Cardano node genesis latest build number from IOHK hydra website
-
-   - https://hydra.iohk.io/build/5367762/download/1/index.html
-
-4. Download Genesis config file needed for shelly-era
-
+## 1. Create our initial assets
+- Create a script that will generate our assets in a nicely formatted json file called "assets.json".
 ```bash
-sudo nano fetch-config.sh
+node src/create-initial-assets-json.js
 ```
-
-```
-NODE_BUILD_NUM=5822084
-wget -N https://hydra.iohk.io/build/${NODE_BUILD_NUM}/download/1/mainnet-shelley-genesis.json
-```
-
+## 2. Download random images for testing
 ```bash
-sudo chmod +x fetch-config.sh
-./fetch-config.sh
+node src/download-test-images.js
 ```
 
-5. make src folder/directory and then create cardano client
+## 3. Create our pinata.cloud account to get our API keys
 
+1. Create an account
+2. Create api keys
+
+## 4. Need to safely store our API keys
+- create .env file and paste in our keys
+
+
+## 5. Extend metadata.json with thumbnails (optional)
+- generate thumbnails based on images from the metadata.json and
+give them same name with `_thumbnail` tag added to the name
 ```bash
-mkdir src; cd src
-sudo nano cardano.js
+node src/generate-thumbnails.js
 ```
 
-```js
-const Cardano = require("cardanocli-js");
-
-const cardano = new Cardano({
-  network: "mainnet",
-  dir: __dirname + "/../",
-  shelleyGenesisPath: __dirname + "/../mainnet-shelley-genesis.json",
-});
-
-module.exports = cardano;
-```
-
-8. create wallet
-
-```
-sudo nano create-wallet.js
-```
-
-```js
-const cardano = require("./cardano");
-
-const createWallet = (account) => {
-  cardano.addressKeyGen(account);
-  cardano.stakeAddressKeyGen(account);
-  cardano.stakeAddressBuild(account);
-  cardano.addressBuild(account);
-  return cardano.wallet(account);
-};
-
-createWallet("ADAPI");
-```
-
+## 6. upload and pin our data to ipfs
+- create pin-to-ipfs.js
+- iterate over each item in metadata.json and:
+    - pin the original image to ipfs
+    - pin the thumbnail to ipfs
+    - store the reference to both src and image on ipfs in metadata.json 
+- create pin-images-to-ipfs.js
 ```bash
-cd minter
-node src/create-wallet.js
+node src/pin-to-ipfs.js
 ```
-
-9. Verify balance wallet balance is Zero, then we fund the wallet
-   - First we need to create a get-balance.js script
-
 ```bash
-# open text editor
-cd minter/src; sudo nano get-balance.js
+node src/pin-images-to-ipfs.js
 ```
 
-```js
-// create get-balance.js
-const cardano = require("./cardano");
+## Before you mint transaction
 
-const sender = cardano.wallet("ADAPI");
+- Speak about the various minting policies. https://docs.cardano.org/projects/cardano-node/en/latest/reference/simple-scripts.html#Step-1---construct-the-tx-body 
 
-console.log(sender.balance());
-```
-
-10. check the balance (utxo)
-
+## 7. Create an "open" or "unlocked" minting policy and script
+- We will create a open minting policy script and export it in a JSON and TXT format.
 ```bash
-cd ..
-node src/get-balance.js
+node src/create-mint-policy.js
 ```
 
-11. Download IPFS
-
-12. Upload your files to IPFS
-
-- image - ipfs://QmQqzMTavQgT4f4T5v6PWBp7XNKtoPmC9jvn12WPT3gkSE
-- src - ipfs://Qmaou5UzxPmPKVVTM9GzXPrDufP55EDZCtQmpy3T64ab9N
-
-13. Generate policy id
-
-14. Define your meta data
-
-15. create mint transaction
-
-```js
-const fs = require("fs");
-const cardano = require("./cardano");
-
-// 1. Get the wallet
-// 2. Define mint script
-// 3. Create POLICY_ID
-// 4. Define ASSET_NAME
-// 5. Create ASSET_ID
-// 6. Define metadata
-// 7. Define transaction
-// 8. Build transaction
-// 9. Sign transaction
-// 10. Submit transaction
-
-const buildTransaction = (tx) => {
-  const raw = cardano.transactionBuildRaw(tx);
-  const fee = cardano.transactionCalculateMinFee({
-    ...tx,
-    txBody: raw,
-  });
-  tx.txOut[0].amount.lovelace -= fee;
-  return cardano.transactionBuildRaw({ ...tx, fee });
-};
-
-const signTransaction = (wallet, tx, script) => {
-  return cardano.transactionSign({
-    signingKeys: [wallet.payment.skey, wallet.payment.skey],
-    scriptFile: script,
-    txBody: tx,
-  });
-};
-
-const wallet = cardano.wallet("ADAPI");
-
-const mintScript = {
-  keyHash: cardano.addressKeyHash(wallet.name),
-  type: "sig",
-};
-
-const POLICY_ID = cardano.transactionPolicyid(mintScript);
-const ASSET_NAME = "BerrySpaceGreen";
-const ASSET_ID = POLICY_ID + "." + ASSET_NAME;
-
-const metadata = {
-  721: {
-    [POLICY_ID]: {
-      [ASSET_NAME]: {
-        name: ASSET_NAME,
-        image: "ipfs://QmQqzMTavQgT4f4T5v6PWBp7XNKtoPmC9jvn12WPT3gkSE",
-        description: "Super Fancy Berry Space Green NFT",
-        type: "image/png",
-        src: "ipfs://Qmaou5UzxPmPKVVTM9GzXPrDufP55EDZCtQmpy3T64ab9N",
-        authors: ["PIADA", "SBLYR"],
-      },
-    },
-  },
-};
-
-const tx = {
-  txIn: wallet.balance().utxo,
-  txOut: [
-    {
-      address: wallet.paymentAddr,
-      amount: { ...wallet.balance().amount, [ASSET_ID]: 1 },
-    },
-  ],
-  mint: [{ action: "mint", amount: 1, token: ASSET_ID }],
-  metadata,
-  witnessCount: 2,
-};
-
-const raw = buildTransaction(tx);
-const signed = signTransaction(wallet, raw, mintScript);
-const txHash = cardano.transactionSubmit(signed);
-console.log(txHash);
-```
-
-16. Run the minting script, then wait a few moments to check the balance (utxo)
-
+## 8. Create an "time-locked" minting policy and script
+- Create a "time-locked" minting policy script and export it in a JSON and TXT format.
 ```bash
-cd ..
-node src/mint-asset.js
+node src/create-time-locked-mint-policy.js
 ```
 
+## 9. Create a a script to get our policy ID
+- We want to make a script that can get our Policy ID to be used in other parts of our program
 ```bash
-node src/get-balance.js
+node src/get-policy-id.js
 ```
 
-17. send your nft back to your wallet
-    - Create anew script to send nft to wallet
-
-```js
-const cardano = require("./cardano");
-
-// 1. get the wallet
-// 2. define the transaction
-// 3. build the transaction
-// 4. calculate the fee
-// 5. pay the fee by subtracting it from the sender utxo
-// 6. build the final transaction
-// 7. sign the transaction
-// 8. submit the transaction
-
-const sender = cardano.wallet("ADAPI");
-
-console.log(
-  "Balance of Sender wallet: " +
-    cardano.toAda(sender.balance().amount.lovelace) +
-    " ADA"
-);
-
-const receiver =
-  "addr1qym6pxg9q4ussr96c9e6xjdf2ajjdmwyjknwculadjya488pqap23lgmrz38glvuz8qlzdxyarygwgu3knznwhnrq92q0t2dv0";
-
-const txInfo = {
-  txIn: cardano.queryUtxo(sender.paymentAddr),
-  txOut: [
-    {
-      address: sender.paymentAddr,
-      amount: {
-        lovelace: sender.balance().amount.lovelace - cardano.toLovelace(1.5),
-      },
-    },
-    {
-      address: receiver,
-      amount: {
-        lovelace: cardano.toLovelace(1.5),
-        "ad9c09fa0a62ee42fb9555ef7d7d58e782fa74687a23b62caf3a8025.BerrySpaceGreen": 1,
-      },
-    },
-  ],
-};
-
-const raw = cardano.transactionBuildRaw(txInfo);
-
-const fee = cardano.transactionCalculateMinFee({
-  ...txInfo,
-  txBody: raw,
-  witnessCount: 1,
-});
-
-//pay the fee by subtracting it from the sender utxo
-txInfo.txOut[0].amount.lovelace -= fee;
-
-//create final transaction
-const tx = cardano.transactionBuildRaw({ ...txInfo, fee });
-
-//sign the transaction
-const txSigned = cardano.transactionSign({
-  txBody: tx,
-  signingKeys: [sender.payment.skey],
-});
-
-//subm transaction
-const txHash = cardano.transactionSubmit(txSigned);
-console.log("TxHash: " + txHash);
+## 9. Define the mint transaction 
+1. build mint transaction with metadata.json
+2. calc fee
+3. rebuild
+4. sign
+5. submit
+```bash
+node src/mint-multiple-assets.js
 ```
 
-18. view your nft in your wallet
-
-19. View your asset on cardanoassets.com
-
-20. View your asset on pool.pm (see the actual picture)
-
-21. Show the original minting metadata
-
-22. open the src ipfs to prove that it work
+## 10. Send assets back to wallet
+-Make a script to send multiple assets back to a wallet in a single transaction.
+```bash
+node src/send-multiple-assets-back-to-wallet.js
+```
