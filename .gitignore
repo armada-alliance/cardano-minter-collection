@@ -1,0 +1,6 @@
+tmp
+priv
+priv_backup
+node_modules
+mainnet-shelley-genesis.json
+.env

@@ -1,0 +1,21 @@
+{
+  "name": "minter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "cardanocli-js": "^3.0.0",
+    "dotenv": "^8.2.0",
+    "form-data": "^4.0.0",
+    "lodash": "^4.17.21",
+    "promise-parallel-throttle": "^3.3.0",
+    "sharp": "^0.28.1"
+  }
+}
