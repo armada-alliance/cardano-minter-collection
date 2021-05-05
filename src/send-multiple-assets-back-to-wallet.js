@@ -76,19 +76,6 @@ function sendAssets({ receiver, assets }) {
 }
 
 sendAssets({
-    receiver: "addr1qydtdgqlv06s7r2qq5jjyzeq544knsp3486r9t2kzmmx7gh6k36mg2qlc9aq7qapx85067d5l8llhhr4fj6azvx384eqxx9jnm",
-    assets: [
-        "PIADA3", 
-        "PIADA4", 
-        "PIADA5",
-        "PIADA6",
-        "PIADA7",
-        "PIADA8",
-        "PIADA9",
-        "PIADA10",
-        "PIADA11",
-        "PIADA12",
-        "PIADA13",
-        "PIADA14"
-    ]
+    receiver: "addr1qylm539axczhyvdh90f6c09ptrz8asa4hgq8u5shkw3v9vjae9ftypmc8tmd2rrwngdxm4sr3tpzmxw4zyg3z7vttpwsl0alww",
+    assets: assets.map(asset => asset.id)
 })

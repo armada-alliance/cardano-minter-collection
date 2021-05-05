@@ -8,7 +8,7 @@ const { policyId: POLICY_ID, mintScript } = getPolicyId()
 
 const metadata_assets = assets.reduce((result, asset) => {
 
-    const ASSET_ID = POLICY_ID + "." + asset.id // 123.PIADA0
+    const ASSET_ID = asset.id // PIADA0
 
     // remove id property from the asset metadata
     const asset_metadata = {
