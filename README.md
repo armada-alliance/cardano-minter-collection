@@ -29,22 +29,20 @@ node src/create-initial-assets-json.js
 ```bash
 node src/download-test-images.js
 ```
-
-## 3. Create our pinata.cloud account to get our API keys
-
-1. Create an account
-2. Create api keys
-
-## 4. Need to safely store our API keys
-- create .env file and paste in our keys
-
-
-## 5. Extend metadata.json with thumbnails (optional)
+## 3. Extend metadata.json with thumbnails (optional)
 - generate thumbnails based on images from the metadata.json and
 give them same name with `_thumbnail` tag added to the name
 ```bash
 node src/generate-thumbnails.js
 ```
+## 4. Create our pinata.cloud account to get our API keys
+
+1. Create an account
+2. Create api keys
+
+## 5. Need to safely store our API keys
+- create .env file and paste in our keys
+
 
 ## 6. upload and pin our data to ipfs
 - create pin-to-ipfs.js
