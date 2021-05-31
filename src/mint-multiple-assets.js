@@ -41,7 +41,7 @@ const txOut_value = assets.reduce((result, asset) => {
     ...wallet.balance().value
 })
 
-const mint_actions = assets.map(asset => ({ type: "mint", value: 1, asset: POLICY_ID + "." + asset.id }))
+const mint_actions = assets.map(asset => ({ type: "mint", quantity: 1, asset: POLICY_ID + "." + asset.id }))
 
 const tx = {
     txIn: wallet.balance().utxo,

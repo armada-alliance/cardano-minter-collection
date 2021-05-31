@@ -39,7 +39,7 @@ invalidAfter,
       amount: { ...wallet.balance().amount, [ASSET_NAME]: 0 },
     },
   ],
-  mint: [{ action: "mint", amount: -1, token: ASSET_NAME }],
+  mint: [{ action: "mint", quantity: -1, token: ASSET_NAME }],
   witnessCount: 2,
 };
 
