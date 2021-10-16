@@ -102,9 +102,10 @@ node src/mint-multiple-assets.js
 -Make a script to send multiple assets back to a wallet in a single transaction.
 ```bash
 node src/send-multiple-assets-back-to-wallet.js
-
-## Optional: Burn all assets
-If you recognize errors in the metadata and want to mint again, use:
-```bash node src/burn-all-assets.js
 ```
-**WARNING: All assets will be burned. Use with caution.**
+## Optional: Burn all assets
+If there are any errors with the metadata, this script is able to burn the entire wallet content:
+
+```bash node src/burn-all-assets.js```
+
+**WARNING:** All assets will be burned. Use with caution.
