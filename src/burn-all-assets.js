@@ -1,47 +1,36 @@
 const cardano = require("./cardano")
 const getPolicyId = require("./get-policy-id")
-const assets = require("./assets.json")
+const prompt = require('prompt-sync')({sigint: true});
+
+// This script will burn all assets in the Wallet specifed below. Good for minting errors. Use with Caution!
 
 const wallet = cardano.wallet("ADAPI")
 
 const { policyId: POLICY_ID, mintScript } = getPolicyId()
 
-const metadata_assets = assets.reduce((result, asset) => {
-
-    const ASSET_ID = asset.id // PIADA0
-
-    // remove id property from the asset metadata
-    const asset_metadata = {
-        ...asset
-    }
-
-    delete asset_metadata.id
-
-    return {
-        ...result,
-        [ASSET_ID]: asset_metadata
-    }
-}, {})
-
-const metadata = {
-    721: {
-        [POLICY_ID]: {
-            ...metadata_assets
-        }
-    }
+const wallet_assets = {
+   ...wallet.balance().value,
 }
+for (const [key, value] of Object.entries(wallet_assets)) {
+  if (key == 'lovelace') {
+    delete wallet_assets[key]
+  }
+}
+const wallet_assets_keys = Object.keys(wallet_assets)
 
-const txOut_value = assets.reduce((result, asset) => {
 
-    const ASSET_ID = POLICY_ID + "." + asset.id
-    result[ASSET_ID] = 1
-    return result
+const txOut_value = {
+   ...wallet.balance().value,
+}
+for (const [key, value] of Object.entries(txOut_value)) {
+  if (key != 'lovelace') {
+    txOut_value[key] = 0
+  }
+}
+console.log("The following Assets will be burned: ", wallet_assets_keys)
 
-}, {
-    ...wallet.balance().value
-})
+const mint_actions = wallet_assets_keys.map(asset => ({ action: "mint", quantity: -1, asset: asset, script: mintScript }))
 
-const mint_actions = assets.map(asset => ({ action: "mint", quantity: 1, asset: POLICY_ID + "." + asset.id, script: mintScript }))
 
 const tx = {
     txIn: wallet.balance().utxo,
@@ -52,15 +41,8 @@ const tx = {
         }
     ],
     mint: mint_actions,
-    metadata,
     witnessCount: 2
 }
-
-// Remove the undefined from the transaction if it extists
-if(Object.keys(tx.txOut[0].value).includes("undefined")){
-  delete tx.txOut[0].value.undefined
-}
-
 
 const buildTransaction = (tx) => {
 
@@ -74,7 +56,7 @@ const buildTransaction = (tx) => {
 
     return cardano.transactionBuildRaw({ ...tx, fee })
 }
-
+prompt("Are you sure to burn all tokens ?")
 const raw = buildTransaction(tx)
 
 // 9. Sign transaction
@@ -90,7 +72,7 @@ const signTransaction = (wallet, tx) => {
 const signed = signTransaction(wallet, raw, mintScript)
 
 // 10. Submit transaction
-
+prompt("Are you really sure? No going back!")
 const txHash = cardano.transactionSubmit(signed)
 
 console.log(txHash)
