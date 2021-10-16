@@ -3,7 +3,7 @@
 ## Prerequisites
 - cardano-node / cardano-cli set up on local machine (https://docs.cardano.org/projects/cardano-node/en/latest)
 - Node.js installed version 14
-- cardano-cli-js package installed 
+- cardano-cli-js package installed
 - cardano-minter repo from the previous tutorial
 
 **If you haven't already, watch the previous video tutorial here:**
@@ -16,7 +16,15 @@ cd cardano-minter
 ```
 ## Install additional dependencies
 ```bash
-npm install form-data dotenv axios lodash sharp promise-parallel-throttle --save
+npm install form-data dotenv axios lodash sharp promise-parallel-throttle prompt-sync --save
+```
+
+After that, make sure to use the newest cardanocli-js repo by directly cloning it
+into the modules folder with the command:
+```
+git clone https://github.com/Berry-Pool/cardanocli-js.git temp_mod
+cp -r temp_mod/* node_modules/cardanocli-js/
+rm -rf temp_mod
 ```
 # Tutorial Overview
 
@@ -49,7 +57,7 @@ node src/generate-thumbnails.js
 - iterate over each item in metadata.json and:
     - pin the original image to ipfs
     - pin the thumbnail to ipfs
-    - store the reference to both src and image on ipfs in metadata.json 
+    - store the reference to both src and image on ipfs in metadata.json
 - create pin-images-to-ipfs.js
 ```bash
 node src/pin-to-ipfs.js
@@ -60,7 +68,7 @@ node src/pin-images-to-ipfs.js
 
 ## Before you mint transaction
 
-- Speak about the various minting policies. https://docs.cardano.org/projects/cardano-node/en/latest/reference/simple-scripts.html#Step-1---construct-the-tx-body 
+- Speak about the various minting policies. https://docs.cardano.org/projects/cardano-node/en/latest/reference/simple-scripts.html#Step-1---construct-the-tx-body
 
 ## 7. Create an "open" or "unlocked" minting policy and script
 - We will create a open minting policy script and export it in a JSON and TXT format.
@@ -80,7 +88,7 @@ node src/create-time-locked-mint-policy.js
 node src/get-policy-id.js
 ```
 
-## 9. Define the mint transaction 
+## 9. Define the mint transaction
 1. build mint transaction with metadata.json
 2. calc fee
 3. rebuild
@@ -94,4 +102,9 @@ node src/mint-multiple-assets.js
 -Make a script to send multiple assets back to a wallet in a single transaction.
 ```bash
 node src/send-multiple-assets-back-to-wallet.js
+
+## Optional: Burn all assets
+If you recognize errors in the metadata and want to mint again, use:
+```bash node src/burn-all-assets.js
 ```
+**WARNING: All assets will be burned. Use with caution.**
