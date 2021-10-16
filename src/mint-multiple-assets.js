@@ -41,7 +41,7 @@ const txOut_value = assets.reduce((result, asset) => {
     ...wallet.balance().value
 })
 
-const mint_actions = assets.map(asset => ({ type: "mint", quantity: 1, asset: POLICY_ID + "." + asset.id }))
+const mint_actions = assets.map(asset => ({ action: "mint", quantity: 1, asset: POLICY_ID + "." + asset.id, script: mintScript }))
 
 const tx = {
     txIn: wallet.balance().utxo,
@@ -51,13 +51,16 @@ const tx = {
             value: txOut_value
         }
     ],
-    mint: {
-        actions: mint_actions,
-        script: [mintScript]
-    },
+    mint: mint_actions,
     metadata,
     witnessCount: 2
 }
+
+// Remove the undefined from the transaction if it extists
+if(Object.keys(tx.txOut[0].value).includes("undefined")){
+  delete tx.txOut[0].value.undefined
+}
+
 
 const buildTransaction = (tx) => {
 
