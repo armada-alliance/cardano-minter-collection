@@ -11,8 +11,8 @@ https://youtu.be/OeOliguGn7Y
 
 ## Clone the cardano-minter repo if you haven't already...
 ```bash
-git clone https://github.com/ADA-Pi/cardano-minter
-cd cardano-minter
+git clone https://github.com/armada-alliance/cardano-minter-collection.git
+cd cardano-minter-collection
 ```
 ## Install additional dependencies
 ```bash
