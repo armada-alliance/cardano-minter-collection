@@ -9,7 +9,7 @@
 **If you haven't already, watch the previous video tutorial here:**
 https://youtu.be/OeOliguGn7Y
 
-## Clone the cardano-minter repo if you haven't already...
+## Clone the repo if you haven't already...
 ```bash
 git clone https://github.com/armada-alliance/cardano-minter-collection.git
 cd cardano-minter-collection
